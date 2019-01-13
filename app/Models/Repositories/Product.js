@@ -8,17 +8,13 @@ class Product {
             if (filters.hasOwnProperty(field)) {
               switch (field) {
                 case 'type_id':
-                  this.whereHas('type', builder => {
-                    builder.where('id', filters[field]);
-                  });
+                  this.where('type_id', filters[field]);
                   break;
                 case 'title':
                   this.where('title', filters[field]);
                   break;
                 case 'user_id':
-                  this.whereHas('user', builder => {
-                    builder.where('id', filters[field]);
-                  });
+                  this.where('user_id', filters[field]);
                   break;
                 default:
                 // unknown filter
