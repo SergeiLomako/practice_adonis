@@ -6,7 +6,23 @@ class Product {
         if (filters) {
           for (const field in filters) {
             if (filters.hasOwnProperty(field)) {
-              this.where(field, filters[field]);
+              switch (field) {
+                case 'type_id':
+                  this.whereHas('type', builder => {
+                    builder.where('id', filters[field]);
+                  });
+                  break;
+                case 'title':
+                  this.where('title', filters[field]);
+                  break;
+                case 'user_id':
+                  this.whereHas('user', builder => {
+                    builder.where('id', filters[field]);
+                  });
+                  break;
+                default:
+                // unknown filter
+              }
             }
           }
         }
