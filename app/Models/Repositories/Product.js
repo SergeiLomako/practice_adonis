@@ -3,7 +3,7 @@ class Product {
     return this.query()
       .with('attributes')
       .where(function() {
-        if (filters) {
+        if (filters && typeof filters === 'object') {
           for (const field in filters) {
             if (filters.hasOwnProperty(field)) {
               switch (field) {
