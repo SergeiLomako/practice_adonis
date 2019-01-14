@@ -6,16 +6,16 @@ class Product {
       .with('type')
       .where(function() {
         if (filters && typeof filters === 'object') {
-          for (const filter of Object.values(filters)) {
-            switch (filter) {
+          for (const field of Object.keys(filters)) {
+            switch (field) {
               case 'type_id':
-                this.where('type_id', filter);
+                this.where('type_id', filters[field]);
                 break;
               case 'title':
-                this.where('title', filter);
+                this.where('title', filters[field]);
                 break;
               case 'user_id':
-                this.where('user_id', filter);
+                this.where('user_id', filters[field]);
                 break;
               default:
               // do nothing
