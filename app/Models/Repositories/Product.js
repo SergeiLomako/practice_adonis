@@ -1,5 +1,13 @@
+const Env = use('Env');
+
 class Product {
-  static async getProducts({ page, perPage, order, sort, filters }) {
+  static async getProducts({
+    page = 1,
+    perPage = Env.get('PAGINATE_LIMIT', 10),
+    order = 'id',
+    sort = 'ASC',
+    filters = null
+  }) {
     return this.query()
       .with('attributes')
       .with('user')

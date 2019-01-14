@@ -1,10 +1,8 @@
 const Product = use('App/Models/Product');
-const Env = use('Env');
 
 class ProductController {
   async index({ request }) {
-    const { page = 1, perPage = Env.get('PAGINATE_LIMIT', 10), order = 'id', sort = 'ASC', filters } = request.all();
-    return Product.getProducts({ page, perPage, order, sort, filters });
+    return Product.getProducts(request.only(['page', 'perPage', 'order', 'sort', 'filters']));
   }
 
   async show({ params }) {
@@ -12,8 +10,7 @@ class ProductController {
   }
 
   async store({ request, response }) {
-    const data = request.only(['type_id', 'user_id', 'title', 'price']);
-    const newProduct = await Product.create(data);
+    const newProduct = await Product.create(request.only(['type_id', 'user_id', 'title', 'price']));
     const { attributes } = request.all();
     await newProduct.attributes().attach(Object.keys(attributes), row => {
       row.value = attributes[row.attribute_id];
@@ -22,10 +19,11 @@ class ProductController {
   }
 
   async update({ request, params }) {
-    const { id } = params;
-    const data = request.only(['title', 'price', 'user_id', 'type_id']);
-    const { attributes } = request.all();
-    return Product.update({ id, data, attributes });
+    return Product.update({
+      data: request.only(['title', 'price', 'user_id', 'type_id']),
+      attributes: request.input('attributes'),
+      id: params.id
+    });
   }
 
   async destroy({ response, params }) {
