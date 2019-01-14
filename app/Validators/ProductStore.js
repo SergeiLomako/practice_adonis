@@ -3,7 +3,7 @@ const Validator = use('Validator');
 const Type = use('App/Models/Type');
 
 const attrsFn = async (data, field, message) => {
-  const { type_id, attributes } = data;
+  const { type_id, attributes } = data; // eslint-disable-line
   if (!attributes) {
     // skip validation if value is not defined or not index. `required` or `integer` rules should take care of it.
     return;
@@ -29,7 +29,7 @@ class ProductStore extends BaseValidator {
       type_id: 'required|integer|exist:types',
       user_id: 'required|integer|exist:users',
       title: 'required|max:60',
-      price: 'required|number',
+      price: 'required|number|above:0',
       attributes: 'required|attrs'
     };
   }

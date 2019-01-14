@@ -12,40 +12,20 @@ class ProductController {
   }
 
   async store({ request, response }) {
-    const { type_id, user_id, title, price, attributes } = request.all();
-    const newProduct = await Product.create({
-      type_id,
-      user_id,
-      title,
-      price
-    });
+    const data = request.only(['type_id', 'user_id', 'title', 'price']);
+    const newProduct = await Product.create(data);
+    const { attributes } = request.all();
     await newProduct.attributes().attach(Object.keys(attributes), row => {
       row.value = attributes[row.attribute_id];
     });
-
     return response.status(201).json(newProduct);
   }
 
-  async update({ request, response, params }) {
-    const product = await Product.findOrFail(params.id);
+  async update({ request, params }) {
+    const { id } = params;
     const data = request.only(['title', 'price', 'user_id', 'type_id']);
-    product.merge(data);
-    await product.save();
     const { attributes } = request.all();
-    const updatingAttributes = [];
-    for (const id in attributes) {
-      if (attributes.hasOwnProperty(id)) {
-        updatingAttributes.push(
-          product
-            .attributes()
-            .pivotQuery()
-            .where('attribute_id', id)
-            .update({ value: attributes[id] })
-        );
-      }
-    }
-    await Promise.all(updatingAttributes);
-    return response.json(product);
+    return Product.update({ id, data, attributes });
   }
 
   async destroy({ response, params }) {
