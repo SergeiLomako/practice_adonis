@@ -21,14 +21,18 @@ class DatabaseSeeder {
         )
       )
     );
-    await Promise.all(concatMultipleArray(products.map(product =>
-      attributes.filter(attr => attr.type_id === product.type_id).map(productAttr =>
-        Factory.model('App/Models/Value').create({
-          productId: product.id,
-          attributeId: productAttr.id
-        })
+    await Promise.all(
+      concatMultipleArray(
+        products.map(product =>
+          attributes.filter(attr => attr.type_id === product.type_id).map(productAttr =>
+            Factory.model('App/Models/Value').create({
+              productId: product.id,
+              attributeId: productAttr.id
+            })
+          )
+        )
       )
-    )));
+    );
   }
 }
 
