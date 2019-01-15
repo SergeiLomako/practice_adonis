@@ -8,6 +8,7 @@ class Product {
     sort = 'ASC',
     filters = null
   }) {
+    const filterFields = ['type_id', 'user_id', 'title'];
     return this.query()
       .with('attributes')
       .with('user')
@@ -15,18 +16,8 @@ class Product {
       .where(function() {
         if (filters && typeof filters === 'object') {
           for (const field of Object.keys(filters)) {
-            switch (field) {
-              case 'type_id':
-                this.where('type_id', filters[field]);
-                break;
-              case 'title':
-                this.where('title', filters[field]);
-                break;
-              case 'user_id':
-                this.where('user_id', filters[field]);
-                break;
-              default:
-              // do nothing
+            if (filterFields.includes(field)) {
+              this.where(field, filters[field]);
             }
           }
         }
@@ -58,6 +49,14 @@ class Product {
       )
     );
     return product;
+  }
+
+  static async createWithAttributes({ data, attributes }) {
+    const newProduct = await this.create(data);
+    await newProduct.attributes().attach(Object.keys(attributes), row => {
+      row.value = attributes[row.attribute_id];
+    });
+    return newProduct;
   }
 }
 

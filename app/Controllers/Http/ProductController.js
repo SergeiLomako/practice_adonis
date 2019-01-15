@@ -1,6 +1,10 @@
 const Product = use('App/Models/Product');
 
 class ProductController {
+  constructor() {
+    this.fields = ['title', 'price', 'user_id', 'type_id'];
+  }
+
   async index({ request }) {
     return Product.getProducts(request.only(['page', 'perPage', 'order', 'sort', 'filters']));
   }
@@ -10,17 +14,16 @@ class ProductController {
   }
 
   async store({ request, response }) {
-    const newProduct = await Product.create(request.only(['type_id', 'user_id', 'title', 'price']));
-    const { attributes } = request.all();
-    await newProduct.attributes().attach(Object.keys(attributes), row => {
-      row.value = attributes[row.attribute_id];
+    const newProduct = await Product.createWithAttributes({
+      data: request.only(this.fields),
+      attributes: request.input('attributes')
     });
     return response.status(201).json(newProduct);
   }
 
   async update({ request, params }) {
     return Product.update({
-      data: request.only(['title', 'price', 'user_id', 'type_id']),
+      data: request.only(this.fields),
       attributes: request.input('attributes'),
       id: params.id
     });
