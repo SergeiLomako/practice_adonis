@@ -1,16 +1,12 @@
 const Attribute = use('App/Models/Attribute');
-const Env = use('Env');
 
 class AttributeController {
+  constructor() {
+    this.fields = ['title', 'type_id'];
+  }
+
   async index({ request }) {
-    const {
-      page = 1,
-      perPage = Env.get('PAGINATE_LIMIT', 10),
-      search = false,
-      order = 'id',
-      sort = 'ASC'
-    } = request.all();
-    return Attribute.getAttributes({ page, perPage, search, order, sort });
+    return Attribute.getAttributes(request.only(['page', 'perPage', 'search', 'order', 'sort']));
   }
 
   async show({ params }) {
@@ -18,17 +14,15 @@ class AttributeController {
   }
 
   async store({ request, response }) {
-    const { title, typeId } = request.all();
-    const attribute = await Attribute.create({ title, type_id: typeId });
+    const attribute = await Attribute.create(request.only(this.fields));
     return response.status(201).json(attribute);
   }
 
-  async update({ request, response, params }) {
-    const attribute = await Attribute.findOrFail(params.id);
-    const data = request.only(['title', 'type_id']);
-    attribute.merge(data);
-    await attribute.save();
-    return response.json(attribute);
+  async update({ request, params }) {
+    return Attribute.updateAttribute({
+      id: params.id,
+      data: request.only(this.fields)
+    });
   }
 
   async destroy({ response, params }) {
