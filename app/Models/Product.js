@@ -1,6 +1,10 @@
 const Base = require('./Base');
 
 class Product extends Base {
+  static get updatedAtColumn() {
+    return null;
+  }
+
   attributes() {
     return this.belongsToMany('App/Models/Attribute')
       .pivotModel('App/Models/Value')

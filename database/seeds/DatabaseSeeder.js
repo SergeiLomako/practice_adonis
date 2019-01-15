@@ -1,28 +1,34 @@
 const Factory = use('Factory');
+const concatMultipleArray = use('App/Helpers/array');
 
 class DatabaseSeeder {
   async run() {
     const types = await Factory.model('App/Models/Type').createMany(10);
-    const attributes = await Promise.all(
-      types.map(type => Factory.model('App/Models/Attribute').create({ typeId: type.id }))
+    const attributeArrays = await Promise.all(
+      types.map(type => Factory.model('App/Models/Attribute').createMany(3, { typeId: type.id }))
     );
+    const attributes = concatMultipleArray(attributeArrays);
     const users = await Factory.model('App/Models/User').createMany(10);
     const products = await Promise.all(
-      types.map(type =>
-        Factory.model('App/Models/Product').create({
-          typeId: type.id,
-          userId: users[Math.floor(Math.random() * users.length)].id
-        })
+      concatMultipleArray(
+        users.map(user =>
+          types.map(type =>
+            Factory.model('App/Models/Product').create({
+              typeId: type.id,
+              userId: user.id
+            })
+          )
+        )
       )
     );
-    await Promise.all(
-      products.map(product =>
+    await Promise.all(concatMultipleArray(products.map(product =>
+      attributes.filter(attr => attr.type_id === product.type_id).map(productAttr =>
         Factory.model('App/Models/Value').create({
           productId: product.id,
-          attributeId: attributes[Math.floor(Math.random() * attributes.length)].id
+          attributeId: productAttr.id
         })
       )
-    );
+    )));
   }
 }
 
