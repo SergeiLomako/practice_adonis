@@ -1,6 +1,6 @@
-const Base = require('./Base');
+const Model = use('Model');
 
-class Attribute extends Base {
+class Value extends Model {
   static get createdAtColumn() {
     return null;
   }
@@ -10,4 +10,4 @@ class Attribute extends Base {
   }
 }
 
-module.exports = Attribute;
+module.exports = Value;

@@ -18,8 +18,8 @@ class AttributeController {
   }
 
   async store({ request, response }) {
-    const { title, typeId } = request.all();
-    const attribute = await Attribute.create({ title, type_id: typeId });
+    const data = request.only(['title', 'type_id']);
+    const attribute = await Attribute.create(data);
     return response.status(201).json(attribute);
   }
 
