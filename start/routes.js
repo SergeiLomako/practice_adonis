@@ -7,6 +7,10 @@ Route.group(() => {
     .apiOnly()
     .validator(new Map([[['types.store'], ['/TypeStore']], [['types.update'], ['/TypeStore']]]));
 
+  Route.resource('products', 'ProductController')
+    .apiOnly()
+    .validator(new Map([[['products.store'], ['/ProductStore']], [['products.update'], ['/ProductStore']]]));
+
   Route.resource('attributes', 'AttributeController')
     .apiOnly()
     .validator(new Map([[['attributes.store'], ['/AttributeStore']], [['attributes.update'], ['/AttributeStore']]]));
