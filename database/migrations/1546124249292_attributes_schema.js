@@ -4,7 +4,7 @@ class AttributesSchema extends Schema {
   up() {
     this.create('attributes', table => {
       table.increments();
-      table.string('title').nullable(false);
+      table.string('title').notNullable();
       table.timestamps();
     });
   }

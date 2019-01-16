@@ -4,7 +4,7 @@ class Types extends Schema {
   up() {
     this.create('types', table => {
       table.increments();
-      table.string('title').nullable(false);
+      table.string('title').notNullable();
       table.timestamps();
     });
   }

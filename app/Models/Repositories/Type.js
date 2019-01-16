@@ -1,5 +1,13 @@
+const Env = use('Env');
+
 class Type {
-  static async getTypes({ page, perPage, search, order, sort }) {
+  static async getTypes({
+    page = 1,
+    perPage = Env.get('PAGINATE_LIMIT', 10),
+    search = false,
+    order = 'id',
+    sort = 'ASC'
+  }) {
     return this.query()
       .with('attributes')
       .where(function() {
@@ -16,6 +24,13 @@ class Type {
       .with('attributes')
       .where('id', id)
       .firstOrFail();
+  }
+
+  static async updateType({ id, data }) {
+    const type = await this.findOrFail(id);
+    type.merge(data);
+    await type.save();
+    return type;
   }
 }
 
