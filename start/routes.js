@@ -3,6 +3,8 @@ const Route = use('Route');
 Route.group(() => {
   Route.get('/', () => ({ status: 'Ok', version: '1.0.0' }));
 
+  Route.post('/login', 'AuthController.login').validator('Login');
+
   Route.resource('types', 'TypeController')
     .apiOnly()
     .validator(new Map([[['types.store'], ['/TypeStore']], [['types.update'], ['/TypeStore']]]));
