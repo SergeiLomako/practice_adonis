@@ -7,13 +7,16 @@ Route.group(() => {
 
   Route.resource('types', 'TypeController')
     .apiOnly()
-    .validator(new Map([[['types.store'], ['/TypeStore']], [['types.update'], ['/TypeStore']]]));
+    .validator(new Map([[['types.store'], ['/TypeStore']], [['types.update'], ['/TypeStore']]]))
+    .middleware(['auth', 'is:admin']);
 
   Route.resource('products', 'ProductController')
     .apiOnly()
-    .validator(new Map([[['products.store'], ['/ProductStore']], [['products.update'], ['/ProductStore']]]));
+    .validator(new Map([[['products.store'], ['/ProductStore']], [['products.update'], ['/ProductStore']]]))
+    .middleware(new Map([[['store'], ['auth', 'is:user']], [['update', 'destroy'], ['auth', 'is:user', 'isOwner']]]));
 
   Route.resource('attributes', 'AttributeController')
     .apiOnly()
-    .validator(new Map([[['attributes.store'], ['/AttributeStore']], [['attributes.update'], ['/AttributeStore']]]));
+    .validator(new Map([[['attributes.store'], ['/AttributeStore']], [['attributes.update'], ['/AttributeStore']]]))
+    .middleware(['auth', 'is:admin']);
 }).prefix('api/v1');

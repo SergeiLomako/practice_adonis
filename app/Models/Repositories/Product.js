@@ -35,8 +35,7 @@ class Product {
       .firstOrFail();
   }
 
-  static async update({ id, data, attributes }) {
-    const product = await this.findOrFail(id);
+  static async update({ product, data, attributes }) {
     product.merge(data);
     await product.save();
     await Promise.all(

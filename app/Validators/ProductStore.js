@@ -27,7 +27,6 @@ class ProductStore extends BaseValidator {
   get rules() {
     return {
       type_id: 'required|integer|exist:types',
-      user_id: 'required|integer|exist:users',
       title: 'required|max:50',
       price: 'required|number|above:0',
       attributes: 'required|attrs'

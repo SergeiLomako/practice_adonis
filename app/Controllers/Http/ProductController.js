@@ -2,7 +2,7 @@ const Product = use('App/Models/Product');
 
 class ProductController {
   constructor() {
-    this.fields = ['title', 'price', 'user_id', 'type_id'];
+    this.fields = ['title', 'price', 'type_id'];
   }
 
   async index({ request }) {
@@ -13,25 +13,24 @@ class ProductController {
     return Product.getSingleProduct(params.id);
   }
 
-  async store({ request, response }) {
+  async store({ request, response, auth }) {
     const newProduct = await Product.createWithAttributes({
-      data: request.only(this.fields),
+      data: Object.assign(request.only(this.fields), { user_id: auth.user.id }),
       attributes: request.input('attributes')
     });
     return response.status(201).json(newProduct);
   }
 
-  async update({ request, params }) {
+  async update({ request, auth }) {
     return Product.update({
-      data: request.only(this.fields),
+      data: Object.assign(request.only(this.fields), { user_id: auth.user.id }),
       attributes: request.input('attributes'),
-      id: params.id
+      product: request.product
     });
   }
 
-  async destroy({ response, params }) {
-    const product = await Product.findOrFail(params.id);
-    await product.delete();
+  async destroy({ response, request }) {
+    await request.product.delete();
     return response.status(204).send();
   }
 }

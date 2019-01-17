@@ -17,7 +17,7 @@ class CreateUser extends Command {
 
   async handle() {
     const answers = {
-      role: await this.choice('Role', ['Admin', 'User']),
+      role: await this.choice('Role', ['Admin', 'User'], 'Admin'),
       email: await this.ask('Email'),
       username: await this.ask('Username (max:20)'),
       password: await this.secure('Password (min:6 | max:25)'),
@@ -30,11 +30,16 @@ class CreateUser extends Command {
       this.error(`${this.icon('error')}  ${validation.messages()[0].message}`);
       process.exit(1);
     } else {
+      const role = await Database.table('roles')
+        .where('name', answers.role)
+        .first();
       delete answers.password_confirmation;
+      delete answers.role;
       const user = await User.create(answers);
+      await user.roles().attach([role.id]);
       user.rawPassword = answers.password;
       Event.fire('createUser', user);
-      this.success(`${this.icon('success')}  ${answers.role} created`);
+      this.success(`${this.icon('success')}  ${role.name} created`);
       Database.close();
     }
   }

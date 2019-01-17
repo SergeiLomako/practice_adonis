@@ -1,5 +1,4 @@
 const Factory = use('Factory');
-const userTypes = ['Admin', 'User'];
 
 Factory.blueprint('App/Models/Type', async (faker, i, data) => ({
   title: data.title || faker.word({ length: 5 })
@@ -13,8 +12,7 @@ Factory.blueprint('App/Models/Attribute', async (faker, i, data) => ({
 Factory.blueprint('App/Models/User', async (faker, i, data) => ({
   username: data.username || faker.word({ length: 5 }),
   email: data.email || faker.email(),
-  password: data.password || 'qwerty',
-  role: data.role || userTypes[Math.floor(Math.random() * userTypes.length)]
+  password: data.password || 'qwerty'
 }));
 
 Factory.blueprint('App/Models/Product', async (faker, i, data) => ({
