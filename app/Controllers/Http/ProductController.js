@@ -15,7 +15,7 @@ class ProductController {
 
   async store({ request, response, auth }) {
     const newProduct = await Product.createWithAttributes({
-      data: Object.assign(request.only(this.fields), { user_id: auth.user.id }),
+      data: { ...request.only(this.fields), user_id: auth.user.id },
       attributes: request.input('attributes')
     });
     return response.status(201).json(newProduct);
