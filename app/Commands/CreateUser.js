@@ -16,12 +16,15 @@ class CreateUser extends Command {
   }
 
   async handle() {
+    const databaseRoles = await Database.table('roles').select(['name', 'id']);
+    const roles = databaseRoles.reduce((acc, role) => {
+      return { ...acc, [role.name]: role.id };
+    }, {});
+    const role = await this.choice('Role', Object.keys(roles), Object.keys(roles)[0]);
     const answers = {
-      role: await this.choice('Role', ['Admin', 'User']),
       email: await this.ask('Email'),
       username: await this.ask('Username (max:20)'),
       password: await this.secure('Password (min:6 | max:25)'),
-      password_confirmation: await this.secure('Confirm password')
     };
 
     const { rules, messages } = new Registration();
@@ -30,12 +33,12 @@ class CreateUser extends Command {
       this.error(`${this.icon('error')}  ${validation.messages()[0].message}`);
       process.exit(1);
     } else {
-      delete answers.password_confirmation;
       const user = await User.create(answers);
+      await user.roles().attach([roles[role].id]);
       user.rawPassword = answers.password;
       Event.fire('createUser', user);
-      this.success(`${this.icon('success')}  ${answers.role} created`);
       Database.close();
+      this.success(`${this.icon('success')}  ${role} created`);
     }
   }
 }

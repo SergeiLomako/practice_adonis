@@ -10,7 +10,7 @@ class Registration extends BaseValidator {
   get rules() {
     return {
       email: 'required|email|unique:users',
-      password: 'required|min:6|max:25|confirmed',
+      password: 'required|min:6|max:25',
       username: 'max:20'
     };
   }
